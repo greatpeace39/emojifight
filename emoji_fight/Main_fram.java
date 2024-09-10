@@ -2,6 +2,9 @@ package emoji_fight;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.List;
 public class Main_fram extends JFrame {
     private static final String path = "src/image_game/";
     private static String[]  images = new String[] {"1","2","3","4","5","6"};
+    //private ArrayList<MouseListener> mouseListeners = new ArrayList<>(); // 存储监听器
     private static List<String> layer1 = new ArrayList<>();  // 图层1（最高层）有8张图片
     private static List<String> layer2 = new ArrayList<>();  // 图层2（中间层）有16张图片
     private static List<String> layer3 = new ArrayList<>();  // 图层3（最低层）有24张图片
@@ -65,13 +69,11 @@ public class Main_fram extends JFrame {
         Collections.shuffle(layer1);
         Collections.shuffle(layer2);
         Collections.shuffle(layer3);
-        System.out.println(layer1);
-        System.out.println(layer2);
-        System.out.println(layer3);
 
     }
 
     private void initimage() {
+        this.getContentPane().removeAll();
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));//
@@ -84,65 +86,51 @@ public class Main_fram extends JFrame {
         layeredPane.add(label1, JLayeredPane.DEFAULT_LAYER);// 加入默认层
         layeredPane.add(label2, JLayeredPane.PALETTE_LAYER);
 
-
+//
         //初始化最底层图层
-        int [][] map3 = getmap();
+        //int [][] map3 = getmap();
         for(int i = 0; i < layer3.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer3.get(i) + ".png"));
-            while(true){
-                int j = (int) (Math.random() * 10);
-                int k = (int) (Math.random() * 10);
-                if(map3[j][k] == 0){
-                    label.setBounds(j*70, k*40, 80, 80);// 设置图片的位置和大
-                    layeredPane.add(label, JLayeredPane.PALETTE_LAYER);
-                    map3[j][k] = 1;
-                    break;
-                }
-            }
+                label.setBounds(i % 6 * 120, i/6 * 100, 80, 80);
+                label.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        layeredPane.remove(label);
+                        repaint();
+                    }
+                });
+                layeredPane.add(label, JLayeredPane.MODAL_LAYER);
         }
         //初始化第二层
-        int [][] map2 = getmap();
+        //int [][] map2 = getmap();
         for(int i = 0; i < layer2.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer2.get(i) + ".png"));
-            while(true){
-                int j = (int) (Math.random() * 10);
-                int k = (int) (Math.random() * 10);
-                if(map2[j][k] == 0){
-                    label.setBounds(j*70, k*40, 80, 80);
-                    layeredPane.add(label, JLayeredPane.MODAL_LAYER);
-                    map2[j][k] = 1;
-                    break;
-                }
-            }
+                label.setBounds(i % 4 * 120, i/4 * 100, 80, 80);
+                label.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        layeredPane.remove(label);
+                        repaint();
+                    }});
+                layeredPane.add(label, JLayeredPane.MODAL_LAYER);
         }
         //初始化第一层
-        int [][] map1 = getmap();
         for(int i = 0; i < layer1.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer1.get(i) + ".png"));
-            while(true){
-                int j = (int) (Math.random() * 10);
-                int k = (int) (Math.random() * 10);
-                if(map1[j][k] == 0){
-                    label.setBounds(j*70, k*40, 80, 80);
-                    layeredPane.add(label, JLayeredPane.POPUP_LAYER);
-                    map1[j][k] = 1;
-                    break;
-                }
-            }
+                MouseListener mouseListener = new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        layeredPane.remove(label);
+                        repaint();
+                    }
+                };
+                label.addMouseListener(mouseListener);
+                label.setBounds(i % 4 * 120, i/4 * 100, 80, 80);
+                layeredPane.add(label, JLayeredPane.MODAL_LAYER);
         }
+
         getContentPane().add(layeredPane);
     }
-
-    private int[][] getmap() {
-        int[][] map = new int[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                map[i][j] = 0;
-            }
-        }
-        return map;
-    }
-
 
     private void initfram() {
         this.setTitle("emoji_fight");
