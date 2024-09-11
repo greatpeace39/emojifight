@@ -12,6 +12,7 @@ import java.util.List;
 public class Main_fram extends JFrame {
     private static final String path = "src/image_game/";
     private static String[]  images = new String[] {"1","2","3","4","5","6"};
+    private static List<String> temp_image = new ArrayList<>();
     //private ArrayList<MouseListener> mouseListeners = new ArrayList<>(); // 存储监听器
     private static List<String> layer1 = new ArrayList<>();  // 图层1（最高层）有8张图片
     private static List<String> layer2 = new ArrayList<>();  // 图层2（中间层）有16张图片
@@ -73,11 +74,11 @@ public class Main_fram extends JFrame {
     }
 
     private void initimage() {
-        this.getContentPane().removeAll();
+        //this.getContentPane().removeAll();
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));//
-
+        System.out.println(temp_image);
         //背景及状态栏设置
         JLabel label1 = new JLabel(new ImageIcon(path + "background.png"));
         JLabel label2 = new JLabel(new ImageIcon(path + "background2.png"));
@@ -88,14 +89,17 @@ public class Main_fram extends JFrame {
 
 //
         //初始化最底层图层
-        //int [][] map3 = getmap();
         for(int i = 0; i < layer3.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer3.get(i) + ".png"));
                 label.setBounds(i % 6 * 120, i/6 * 100, 80, 80);
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        String str = label.getIcon().toString();
+                        temp_image.add(str);
                         layeredPane.remove(label);
+                        inittemp_fram(layeredPane);
+                        revalidate();
                         repaint();
                     }
                 });
@@ -109,10 +113,14 @@ public class Main_fram extends JFrame {
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        String str = label.getIcon().toString();
+                        temp_image.add(str);
                         layeredPane.remove(label);
+                        inittemp_fram(layeredPane);
+                        revalidate();
                         repaint();
                     }});
-                layeredPane.add(label, JLayeredPane.MODAL_LAYER);
+                layeredPane.add(label, JLayeredPane.POPUP_LAYER);
         }
         //初始化第一层
         for(int i = 0; i < layer1.size();i++){
@@ -120,16 +128,42 @@ public class Main_fram extends JFrame {
                 MouseListener mouseListener = new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        String str = label.getIcon().toString();
+                        temp_image.add(str);
                         layeredPane.remove(label);
+                        inittemp_fram(layeredPane);
+                        revalidate();
                         repaint();
                     }
                 };
                 label.addMouseListener(mouseListener);
-                label.setBounds(i % 4 * 120, i/4 * 100, 80, 80);
-                layeredPane.add(label, JLayeredPane.MODAL_LAYER);
+                label.setBounds(i % 2 * 240 +220, i/2 * 100, 80, 80);
+                layeredPane.add(label, JLayeredPane.DRAG_LAYER);
         }
 
         getContentPane().add(layeredPane);
+    }
+
+    private void inittemp_fram(JLayeredPane layeredPane) {
+        if (!temp_image.isEmpty()) {
+            for (int i = 0; i < temp_image.size(); i++) {
+                JLabel label = new JLabel(new ImageIcon(temp_image.get(i).toString()));
+                label.setBounds(i * 100, 460, 80, 80);
+                layeredPane.add(label, JLayeredPane.DRAG_LAYER);
+            }
+            if (Collections.frequency(temp_image, temp_image.get(temp_image.size() - 1)) == 3) {
+                List<String> toremove = Arrays.asList(temp_image.get(temp_image.size() - 1));
+                temp_image.removeAll(toremove);
+                if (!temp_image.isEmpty()) {
+                    for (int i = 0; i < temp_image.size(); i++) {
+                        JLabel label = new JLabel(new ImageIcon(temp_image.get(i).toString()));
+                        label.setBounds(i * 100, 460, 80, 80);
+                        layeredPane.add(label, JLayeredPane.DRAG_LAYER);
+                    }
+                }
+                repaint();
+            }
+        }
     }
 
     private void initfram() {
