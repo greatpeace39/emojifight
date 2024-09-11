@@ -16,7 +16,7 @@ public class Main_fram extends JFrame {
     Rectangle removearea = new Rectangle(0, 460, 800, 80);
     private static List<String> layer1 = new ArrayList<>();  // 图层1（最高层）有8张图片
     private static List<String> layer2 = new ArrayList<>();  // 图层2（中间层）有20张图片
-    private static List<String> layer3 = new ArrayList<>();  // 图层3（最低层）有28张图片
+    private static List<String> layer3 = new ArrayList<>();  // 图层3（最低层）有26张图片
     //Layers layers = new Layers();
     public void game_start() {
         initfram();
@@ -74,7 +74,7 @@ public class Main_fram extends JFrame {
     }
 
     private void initimage() {
-        this.getContentPane().removeAll();
+        //this.getContentPane().removeAll();
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));//
@@ -94,32 +94,36 @@ public class Main_fram extends JFrame {
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        String str = label.getIcon().toString();
-                        temp_image.add(str);
-                        layeredPane.remove(label);
-                        is_clear(Collections.frequency(temp_image,str));
-                        inittemp_fram(layeredPane);
-                        revalidate();
-                        repaint();
+                        {
+                            String str = label.getIcon().toString();
+                            temp_image.add(str);
+                            layeredPane.remove(label);
+                            is_clear(Collections.frequency(temp_image,str));
+                            inittemp_fram(layeredPane);
+                            revalidate();
+                            repaint();
+                        }
                     }
                 });
                 layeredPane.add(label, JLayeredPane.MODAL_LAYER);
         }
         //初始化第二层
-        //int [][] map2 = getmap();
         for(int i = 0; i < layer2.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer2.get(i) + ".png"));
                 label.setBounds(i % 5 * 100+60, i/5 * 100, 80, 80);
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        String str = label.getIcon().toString();
-                        temp_image.add(str);
-                        layeredPane.remove(label);
-                        is_clear(Collections.frequency(temp_image,str));
-                        inittemp_fram(layeredPane);
-                        revalidate();
-                        repaint();
+
+                        {
+                            String str = label.getIcon().toString();
+                            temp_image.add(str);
+                            layeredPane.remove(label);
+                            is_clear(Collections.frequency(temp_image,str));
+                            inittemp_fram(layeredPane);
+                            revalidate();
+                            repaint();
+                        }
                     }});
                 layeredPane.add(label, JLayeredPane.POPUP_LAYER);
         }
@@ -129,13 +133,16 @@ public class Main_fram extends JFrame {
                 MouseListener mouseListener = new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        String str = label.getIcon().toString();
-                        temp_image.add(str);
-                        layeredPane.remove(label);
-                        is_clear(Collections.frequency(temp_image,str));
-                        inittemp_fram(layeredPane);
-                        revalidate();
-                        repaint();
+                        {
+                            String str = label.getIcon().toString();
+                            temp_image.add(str);
+                            layeredPane.remove(label);
+                            is_clear(Collections.frequency(temp_image,str));
+                            inittemp_fram(layeredPane);
+                            revalidate();
+                            repaint();
+                        }
+
                     }
                 };
                 label.addMouseListener(mouseListener);
@@ -144,6 +151,27 @@ public class Main_fram extends JFrame {
         }
 
         getContentPane().add(layeredPane);
+    }
+
+    private void initendpage() {
+        this.getContentPane().removeAll();
+        JLabel label1 = new JLabel(new ImageIcon(path + "failpage.png"));
+        label1.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                game_start();
+            }
+        });
+        label1.setBounds(0, 0, 800,600 );
+        this.add(label1);
+        this.repaint();
+    }
+
+    private boolean checkliveisfull() {
+        if(temp_image.size() == 8){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void is_clear(int frequency) {
@@ -159,7 +187,7 @@ public class Main_fram extends JFrame {
                 JLabel label = new JLabel(new ImageIcon(temp_image.get(i).toString()));
                 label.setBounds(i * 100, 460, 80, 80);
                 layeredPane.add(label, JLayeredPane.DRAG_LAYER);
-                repaint();
+                if(checkliveisfull()) initendpage();
         }
     }
 
