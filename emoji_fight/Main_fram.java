@@ -1,24 +1,31 @@
 package emoji_fight;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main_fram extends JFrame {
-    private static final String path = "image_game/";
-    private static String[]  images = new String[] {"1","2","3","4","5","6"};
-    private static List<String> temp_image = new ArrayList<>();
-    Rectangle removearea = new Rectangle(0, 460, 800, 80);
+    private static final String path = "src/image_game/";// 图片路径
+    private static int counttime = 60;//游戏时长
+    private static int TIME = 0;//游戏时间
+    private static int FLAG = 0;//胜利判断标准
+    private Timer timer;// 倒计时
+    private static String[]  images = new String[] {"1","2","3","4","5","6"};//种类
+    private static List<String> temp_image = new ArrayList<>();//状态栏图片
+    Rectangle removearea = new Rectangle(0, 460, 800, 80);//状态栏区域
     private static List<String> layer1 = new ArrayList<>();  // 图层1（最高层）有8张图片
     private static List<String> layer2 = new ArrayList<>();  // 图层2（中间层）有20张图片
     private static List<String> layer3 = new ArrayList<>();  // 图层3（最低层）有26张图片
     //Layers layers = new Layers();
     public void game_start() {
+        temp_image.clear();
+        layer1.clear();
+        layer2.clear();
+        layer3.clear();
         initfram();
         initimagelaters();
         initimage();
@@ -74,7 +81,7 @@ public class Main_fram extends JFrame {
     }
 
     private void initimage() {
-        //this.getContentPane().removeAll();
+        this.getContentPane().removeAll();
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(800, 600));//
@@ -95,6 +102,7 @@ public class Main_fram extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         {
+                            FLAG++;
                             String str = label.getIcon().toString();
                             temp_image.add(str);
                             layeredPane.remove(label);
@@ -116,6 +124,7 @@ public class Main_fram extends JFrame {
                     public void mouseClicked(MouseEvent e) {
 
                         {
+                            FLAG++;
                             String str = label.getIcon().toString();
                             temp_image.add(str);
                             layeredPane.remove(label);
@@ -134,6 +143,7 @@ public class Main_fram extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         {
+                            FLAG++;
                             String str = label.getIcon().toString();
                             temp_image.add(str);
                             layeredPane.remove(label);
@@ -149,18 +159,58 @@ public class Main_fram extends JFrame {
                 label.setBounds(i % 2 * 240 +220, i/2 * 100, 80, 80);
                 layeredPane.add(label, JLayeredPane.DRAG_LAYER);
         }
+        //初始化一个60秒的倒计时
+        JLabel Time_t = new JLabel("时间还剩下"+counttime + "s");
+        Time_t.setBounds(300,400, 300, 50);
+        Time_t.setFont(new Font("微软雅黑", Font.BOLD, 30));
+        Time_t.setForeground(Color.RED);
+        final int[] temptime = {counttime};
+        layeredPane.add(Time_t, JLayeredPane.MODAL_LAYER);
 
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                temptime[0]--;
+                Time_t.setText("时间还剩下"+ temptime[0] + "s");
+                if( temptime[0] == 0){
+                    timer.stop();
+                    initendpage();
+                }
+            }
+        });
+        timer.start();
         getContentPane().add(layeredPane);
     }
 
     private void initendpage() {
         this.getContentPane().removeAll();
         JLabel label1 = new JLabel(new ImageIcon(path + "failpage.png"));
-        label1.addMouseListener(new MouseAdapter() {
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setBounds(300, 500, 200, 50);
+        menuBar.setBackground(new Color(255, 192, 203));
+        JMenu menu1 = new JMenu("退出游戏");
+        menu1.setFont(new Font("微软雅黑", Font.BOLD, 20));
+        //给menu1添加鼠标监听事件，当监听到事件时关闭窗口退出游戏
+        menu1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.exit(0);
+            }
+        });
+        //给menu1添加鼠标监听事件，当监听到事件时创建一个新游戏
+        JMenu menu2 = new JMenu("重新开始");
+
+        menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
+        menu2.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 game_start();
             }
         });
+
+        menuBar.add(menu1);
+        menuBar.add(menu2);
+        label1.add(menuBar);
         label1.setBounds(0, 0, 800,600 );
         this.add(label1);
         this.repaint();
@@ -182,6 +232,9 @@ public class Main_fram extends JFrame {
     }
 
     private void inittemp_fram(JLayeredPane layeredPane) {
+            if(temp_image.isEmpty()){
+                checkisvictory();
+            }
                 flash_live(layeredPane);
             for (int i = 0; i < temp_image.size(); i++) {
                 JLabel label = new JLabel(new ImageIcon(temp_image.get(i).toString()));
@@ -189,6 +242,40 @@ public class Main_fram extends JFrame {
                 layeredPane.add(label, JLayeredPane.DRAG_LAYER);
                 if(checkliveisfull()) initendpage();
         }
+    }
+
+    private void checkisvictory() {
+                    if(FLAG == 54){
+                        this.getContentPane().removeAll();
+                        JLabel label1 = new JLabel(new ImageIcon(path + "victory.png"));
+                        JMenuBar menuBar = new JMenuBar();
+                        menuBar.setBounds(300, 500, 200, 50);
+                        menuBar.setBackground(new Color(255, 192, 203));
+                        JMenu menu1 = new JMenu("退出游戏");
+                        menu1.setFont(new Font("微软雅黑", Font.BOLD, 20));
+                        //给menu1添加鼠标监听事件，当监听到事件时关闭窗口退出游戏
+                        menu1.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                System.exit(0);
+                            }
+                        });
+                        //添加menu2表示进行下一关
+                        JMenu menu2 = new JMenu("下一关");
+                        menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
+                        menu2.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                game_start();
+                            }
+                        });
+                        menuBar.add(menu2);
+                        menuBar.add(menu1);
+                        label1.add(menuBar);
+                        label1.setBounds(0, 0, 800,600 );
+                        this.add(label1);
+                        this.repaint();
+                    }
     }
 
     private void flash_live(JLayeredPane layeredPane) {
