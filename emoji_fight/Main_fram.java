@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main_fram extends JFrame {
-    private static final String path = "src/image_game/";// 图片路径
-    private static int counttime = 60;//游戏时长
+    private static final String path = "image_game/";// 图片路径
+    private static int counttime;//游戏时长
     private static int TIME = 0;//游戏时间
     private static int FLAG = 0;//胜利判断标准
-    private Timer timer;// 倒计时
+    private Timer timer;
+    private static  int VIC;
+    private records R;// 倒计时
     private static String[]  images = new String[] {"1","2","3","4","5","6"};//种类
     private static List<String> temp_image = new ArrayList<>();//状态栏图片
     Rectangle removearea = new Rectangle(0, 460, 800, 80);//状态栏区域
@@ -22,7 +24,11 @@ public class Main_fram extends JFrame {
     private static List<String> layer3 = new ArrayList<>();  // 图层3（最低层）有26张图片
     //Layers layers = new Layers();
     public void game_start() {
+        counttime = 60;
+        TIME = counttime;//游戏时长
+        FLAG = 0;
         temp_image.clear();
+        VIC = images.length*9;
         layer1.clear();
         layer2.clear();
         layer3.clear();
@@ -164,15 +170,18 @@ public class Main_fram extends JFrame {
         Time_t.setBounds(300,400, 300, 50);
         Time_t.setFont(new Font("微软雅黑", Font.BOLD, 30));
         Time_t.setForeground(Color.RED);
-        final int[] temptime = {counttime};
+        //final int[] temptime = {counttime};
         layeredPane.add(Time_t, JLayeredPane.MODAL_LAYER);
+        if(timer != null){
+            timer.stop();
+        }
 
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                temptime[0]--;
-                Time_t.setText("时间还剩下"+ temptime[0] + "s");
-                if( temptime[0] == 0){
+                counttime--;
+                Time_t.setText("时间还剩下"+ counttime + "s");
+                if( counttime < 0){
                     timer.stop();
                     initendpage();
                 }
@@ -183,6 +192,7 @@ public class Main_fram extends JFrame {
     }
 
     private void initendpage() {
+        //System.out.println(counttime);
         this.getContentPane().removeAll();
         JLabel label1 = new JLabel(new ImageIcon(path + "failpage.png"));
         JMenuBar menuBar = new JMenuBar();
@@ -199,15 +209,13 @@ public class Main_fram extends JFrame {
         });
         //给menu1添加鼠标监听事件，当监听到事件时创建一个新游戏
         JMenu menu2 = new JMenu("重新开始");
-
         menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
         menu2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                game_start();
+                    game_start();
             }
         });
-
         menuBar.add(menu1);
         menuBar.add(menu2);
         label1.add(menuBar);
@@ -245,8 +253,14 @@ public class Main_fram extends JFrame {
     }
 
     private void checkisvictory() {
-                    if(FLAG == 54){
+                    if(FLAG == VIC){
                         this.getContentPane().removeAll();
+                        if(timer != null){
+                            timer.stop();
+                        }
+                        TIME = TIME - counttime;
+                        R = new records(TIME,"game1_record");
+                        System.out.println(TIME);
                         JLabel label1 = new JLabel(new ImageIcon(path + "victory.png"));
                         JMenuBar menuBar = new JMenuBar();
                         menuBar.setBounds(300, 500, 200, 50);
@@ -266,7 +280,8 @@ public class Main_fram extends JFrame {
                         menu2.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
-                                game_start();
+                                Final_Stage fs = new Final_Stage();
+                                fs.game_start();
                             }
                         });
                         menuBar.add(menu2);

@@ -5,7 +5,6 @@ import java.util.List;
 
 public class test {
     public static void main(String[] args) {
-        Main_fram mf = new Main_fram();
-        mf.game_start();
+        Start_Fram sf = new Start_Fram();
     }
 }
