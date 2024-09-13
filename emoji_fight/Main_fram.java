@@ -263,7 +263,7 @@ public class Main_fram extends JFrame {
                         System.out.println(TIME);
                         JLabel label1 = new JLabel(new ImageIcon(path + "victory.png"));
                         JMenuBar menuBar = new JMenuBar();
-                        menuBar.setBounds(300, 500, 200, 50);
+                        menuBar.setBounds(200, 500, 400, 50);
                         menuBar.setBackground(new Color(255, 192, 203));
                         JMenu menu1 = new JMenu("退出游戏");
                         menu1.setFont(new Font("微软雅黑", Font.BOLD, 20));
@@ -284,6 +284,16 @@ public class Main_fram extends JFrame {
                                 fs.game_start();
                             }
                         });
+                        //添加一个查看game1_top的选项
+                        JMenu menu3 = new JMenu("排行榜");
+                        menu3.setFont(new Font("微软雅黑", Font.BOLD, 20));
+                        menu3.addMouseListener(new MouseAdapter() {
+                            //通过创建一个新的 top 对象查看 game1 的排行榜
+                            public void mouseClicked(MouseEvent e) {
+                                top t = new top("game1_record");
+                            }
+                        });
+                        menuBar.add(menu3);
                         menuBar.add(menu2);
                         menuBar.add(menu1);
                         label1.add(menuBar);

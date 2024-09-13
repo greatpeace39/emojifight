@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-
+//第二关，倒计时为150s，倒计时结束后，游戏结束，显示分数
 public class Final_Stage extends Main_fram{
     private static final String path = "image_game/";// 图片路径
     private static int counttime;//游戏时长
@@ -79,8 +79,7 @@ public class Final_Stage extends Main_fram{
         this.getContentPane().removeAll();
 
         JLayeredPane layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(800, 600));//
-        //背景及状态栏设置
+        layeredPane.setPreferredSize(new Dimension(800, 600));//背景及状态栏设置
         JLabel label1 = new JLabel(new ImageIcon(path + "background.png"));
         JLabel label2 = new JLabel(new ImageIcon(path + "background2.png"));
         label1.setBounds(0, 0, 800, 600);  // 设置图片的位置和大小
@@ -88,7 +87,7 @@ public class Final_Stage extends Main_fram{
         layeredPane.add(label1, JLayeredPane.DEFAULT_LAYER);// 加入默认层
         layeredPane.add(label2, JLayeredPane.PALETTE_LAYER);
 
-//
+
         //初始化最底层图层
         for(int i = 0; i < layer3.size();i++){
             JLabel label = new JLabel(new ImageIcon(path + layer3.get(i) + ".png"));
@@ -159,12 +158,10 @@ public class Final_Stage extends Main_fram{
         Time_t.setBounds(300,400, 300, 50);
         Time_t.setFont(new Font("微软雅黑", Font.BOLD, 30));
         Time_t.setForeground(Color.RED);
-        //final int[] temptime = {counttime};
         layeredPane.add(Time_t, JLayeredPane.MODAL_LAYER);
         if(timer != null){
             timer.stop();
         }
-
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -181,7 +178,6 @@ public class Final_Stage extends Main_fram{
     }
 
     private void initendpage() {
-        //System.out.println(counttime);
         this.getContentPane().removeAll();
         JLabel label1 = new JLabel(new ImageIcon(path + "failpage.png"));
         JMenuBar menuBar = new JMenuBar();
@@ -196,9 +192,10 @@ public class Final_Stage extends Main_fram{
                 System.exit(0);
             }
         });
-        //给menu1添加鼠标监听事件，当监听到事件时创建一个新游戏
+
         JMenu menu2 = new JMenu("重新开始");
         menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
+        //给menu2添加鼠标监听事件，当监听到事件时创建一个新游戏
         menu2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -212,7 +209,7 @@ public class Final_Stage extends Main_fram{
         this.add(label1);
         this.repaint();
     }
-
+//状态栏检测
     private boolean checkliveisfull() {
         if(temp_image.size() == 8){
             return true;
@@ -220,14 +217,14 @@ public class Final_Stage extends Main_fram{
             return false;
         }
     }
-
+//消除机制
     private void is_clear(int frequency) {
         if(frequency == 4){
             List<String> toremove = Arrays.asList(temp_image.get(temp_image.size() - 1));
             temp_image.removeAll(toremove);
         }
     }
-
+//绘制状态栏
     private void inittemp_fram(JLayeredPane layeredPane) {
         if(temp_image.isEmpty()){
             checkisvictory();
@@ -240,7 +237,7 @@ public class Final_Stage extends Main_fram{
             if(checkliveisfull()) initendpage();
         }
     }
-
+//胜利检测
     private void checkisvictory() {
         if(FLAG == VIC){
             this.getContentPane().removeAll();
@@ -249,7 +246,6 @@ public class Final_Stage extends Main_fram{
             }
             TIME = TIME - counttime;
             R = new records(TIME,"game2_record");
-            //System.out.println(TIME);
             JLabel label1 = new JLabel(new ImageIcon(path + "victory.png"));
             JMenuBar menuBar = new JMenuBar();
             menuBar.setBounds(300, 500, 200, 50);
@@ -263,7 +259,7 @@ public class Final_Stage extends Main_fram{
                     System.exit(0);
                 }
             });
-            //添加menu2表示进行下一关
+            //添加menu2表示进行重新开始
             JMenu menu2 = new JMenu("重新开始");
             menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
             menu2.addMouseListener(new MouseAdapter() {
@@ -272,6 +268,16 @@ public class Final_Stage extends Main_fram{
                     game_start();
                 }
             });
+            //添加一个查看game1_top的选项
+            JMenu menu3 = new JMenu("排行榜");
+            menu3.setFont(new Font("微软雅黑", Font.BOLD, 20));
+            menu3.addMouseListener(new MouseAdapter() {
+                //通过创建一个新的 top 对象查看 game1 的排行榜
+                public void mouseClicked(MouseEvent e) {
+                    top t = new top("game1_record");
+                }
+            });
+            menuBar.add(menu3);
             menuBar.add(menu2);
             menuBar.add(menu1);
             label1.add(menuBar);
@@ -280,7 +286,7 @@ public class Final_Stage extends Main_fram{
             this.repaint();
         }
     }
-
+//刷新状态栏
     private void flash_live(JLayeredPane layeredPane) {
         for(Component comp:layeredPane.getComponentsInLayer(layeredPane.DRAG_LAYER)){
             if(removearea.intersects(comp.getBounds())){
@@ -289,7 +295,7 @@ public class Final_Stage extends Main_fram{
         }
         layeredPane.repaint();
     }
-
+//初始化界面
     private void initfram() {
         this.setTitle("emoji_fight");
         this.setSize(800, 600);

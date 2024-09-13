@@ -2,12 +2,14 @@ package emoji_fight;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static java.awt.Color.GREEN;
 import static java.awt.Color.green;
-
+//启动界面，显示游戏介绍，开始游戏，查看排行榜
 public class Start_Fram extends Main_fram {
     public Start_Fram() {
         initbasic();
@@ -20,29 +22,35 @@ public class Start_Fram extends Main_fram {
         JLabel label1 = new JLabel(new ImageIcon("image_game/startpage.png"));
         //label1.add
         JMenuBar menuBar = new JMenuBar();//开始游戏
-
-        //menuBar.setBackground(new Color(0,255,0));
-        JMenuBar menuBar1 = new JMenuBar(){
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.setColor(Color.GREEN);  // 设定自定义背景颜色
-                g.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };//查看排行榜
+        JMenuBar menuBar1 = new JMenuBar();//查看排行榜
+        menuBar.setOpaque(false);  // 设置透明
+        menuBar.setBackground(new Color(0, 0, 0, 100));  // 半透明背景 (黑色, 100 透明度)
+        menuBar1.setOpaque(false);  // 设置透明
+        menuBar1.setBackground(new Color(0, 0, 0, 100));  // 半透明背景 (黑色, 100 透明度)
         menuBar.setBounds(280, 500, 250, 50);
         menuBar1.setBounds(280, 400, 250, 50);
         //menuBar1.setBackground(new Color(0,255,0));
         JMenu menu1 = new JMenu("查看排行榜");
-        menu1.setOpaque(true);
-        menu1.setFont(new Font("微软雅黑", Font.BOLD, 20));
-        menu1.setBackground(new Color(0,255,0));
-        //给menu1添加鼠标监听事件，当监听到事件时关闭窗口退出游戏
-        menu1.addMouseListener(new MouseAdapter() {
+        JMenuItem jm1 = new JMenuItem("GAME1");
+        JMenuItem jm2 = new JMenuItem("GAME2");
+        menu1.add(jm1);
+        menu1.add(jm2);
+        jm1.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
+                //JOptionPane.showMessageDialog(null,"GAME1");
+                top t = new top("game1_record");
             }
         });
+        jm2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //JOptionPane.showMessageDialog(null,"GAME2");
+                top t = new top("game2_record");
+            }
+        });
+        menu1.setOpaque(true);
+        menu1.setFont(new Font("微软雅黑", Font.BOLD, 20));
         //添加menu2表示进行下一关
         JMenu menu2 = new JMenu("开始游戏");
         menu2.setFont(new Font("微软雅黑", Font.BOLD, 20));
@@ -68,5 +76,4 @@ public class Start_Fram extends Main_fram {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
 }
